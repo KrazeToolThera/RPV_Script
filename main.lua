@@ -1,7 +1,7 @@
 if game.PlaceId == 93903714374388 then
     local PLAYERS = game:GetService("Players")
     local LIGHTING = game:GetService("Lighting")
-    local TEXTCHATSERVICE = game:GetService("TextChatService")
+    --local TEXTCHATSERVICE = game:GetService("TextChatService")
     local REPLICATEDSTORAGE = game:GetService("ReplicatedStorage")
     local SCREENGUI = game:GetService("StarterGui")
     local STARTERPLAYER = game:GetService("StarterPlayer")
@@ -12,6 +12,8 @@ if game.PlaceId == 93903714374388 then
 
     local cars = {}
     local teleport = {}
+
+    local timeToDeleteMap = 0.1
 
     local teleportBack = true
     local selectedCar
@@ -28,13 +30,13 @@ if game.PlaceId == 93903714374388 then
         end
     end
 
-    local function teloportTo(part)
-        if part then
-            localPlayer.Character:MoveTo(part.CFrame.Position + Vector3.new(0, 2.75+part.Size.Y/2, 0))
+    local function teloportTo(position : Vector3)
+        if position then
+            localPlayer.Character:MoveTo(position)
         end
     end
 
-    local function becomePartOfATeam(team)
+    local function becomePartOfATeam(team : string)
         if teleportBack then
             local lastCFrame = localPlayer.Character.HumanoidRootPart.CFrame
             REPLICATEDSTORAGE:WaitForChild("TeamsRE"):FireServer(team)
@@ -46,8 +48,8 @@ if game.PlaceId == 93903714374388 then
         REPLICATEDSTORAGE:WaitForChild("SpawnCar"):FireServer(selectedCar)
     end
 
-    local function finalOutput(instance)
-        print(instance.Name..' was deleted in '..instance:GetFullName())
+    local function finalOutput(object_X)
+        print('✔: '..object_X.Name..' was deleted in '..object_X:GetFullName())
     end
 
     local function deleteACar(mode)
@@ -76,52 +78,54 @@ if game.PlaceId == 93903714374388 then
         end
     end
 
-    for _, v in pairs(workspace:GetDescendants()) do
-        if v:IsA('SpawnLocation') then
-            if not v.Name == 'SpawnLocation' then return end
-            if v.TeamColor == BrickColor.new('Forest green') then teleport.defaultSpawn = v
-            elseif v.TeamColor == BrickColor.new('Really red') then teleport.criminalSpawn = v
-            elseif v.TeamColor == BrickColor.new('Really blue') then teleport.policeSpawn = v
-            elseif v.TeamColor == BrickColor.new('Deep orange') then teleport.emergenceSpawn = v
-            elseif v.TeamColor == BrickColor.new('New Yeller') then teleport.taxiSpawn = v end-->
-        elseif v:IsA('Part') then
-            if v.Position == Vector3.new(411.6749572753906, 10.12499713897705, -155.85000610351562) then
-                teleport.garages = v
-            elseif v.Position == Vector3.new(49.419212341308594, 11.409276962280273, 70.3260498046875) then
-                teleport.hospital = v
-            elseif v.Position == Vector3.new(54.65410614013672, 12.144861221313477, 432.7012939453125) then
-                teleport.school = v
-            elseif v.Position == Vector3.new(-779.0899658203125, 10.637853622436523, 174.56324768066406) then
-                teleport.storage = v
-            elseif v.Position == Vector3.new(-797.6505126953125, 7.749991416931152, -423.87042236328125) then
-                teleport.fishing = v
-            elseif v.Position == Vector3.new(-511.69989013671875, 15.911480903625488, 936.2000732421875) then
-                teleport.trainStation1 = v
-            elseif v.Position == Vector3.new(-3355.934814453125, 16.2115535736084, 1846.817138671875) then
-                teleport.trainStation2 = v
-            elseif v.Position == Vector3.new(-3187.59423828125, 10.370031356811523, 743.4171142578125) then
-                teleport.rural = v
-            elseif v.Position == Vector3.new(-3211.529296875, 10.600032806396484, 755.6580200195312) then
-                teleport.ruralShop = v
-            elseif v.Position == Vector3.new(-290.4661865234375, 10.863554000854492, 1750.0054931640625) then
-                teleport.checkpoint = v
-            elseif v.Position == Vector3.new(-1829.929931640625, 30, 500.3626403808594) then
-                teleport.field = v --Wrong coords
-            end
-        elseif v:IsA('MeshPart') then
-            if v.Position == Vector3.new(-2826.895751953125, 30.337114334106445, 483.8316955566406) then
-                teleport.forest = v
-            end
-        end
-    end
+    teleport.defaultSpawn=Vector3.new(-390, 18, -82)
+    teleport.criminalSpawn=Vector3.new(-200, 15, -118)
+    teleport.policeSpawn=Vector3.new(-279, 17, -256)
+    teleport.emergenceSpawn=Vector3.new(-18, 16, 198)
+    teleport.taxiSpawn=Vector3.new(-4502, 15.5, 2012)
 
-    if SCREENGUI:FindFirstChild('ScreenGui') and SCREENGUI.ScreenGui:FindFirstChild('Frame') then
-        for i, v in pairs(SCREENGUI.ScreenGui.Frame:GetChildren())do cars[i] = v.Name end
-        selectedCar = cars[1]
+    teleport.prisonCell1=Vector3.new(-280, 18, -363)
+    teleport.prisonCell2=Vector3.new(-258.5, 18, -363)
+    teleport.hospital=Vector3.new(70, 16, 69.8)
+    teleport.school=Vector3.new(88.5, 18, 439)
+    teleport.shop=Vector3.new(125, 15.5, -250)
+    teleport.garages=Vector3.new(416, 14.5, -144)
+    teleport.storage=Vector3.new(-779, 14.5, 174)
+    teleport.gasStation1=Vector3.new(-405, 15, 1234)
+    teleport.gasStation2=Vector3.new(-1762, 15, 2345)
+    teleport.checkpoint=Vector3.new(-275, 15, 1743)
+    teleport.trainStation1=Vector3.new(-577, 54, 885.4)
+    teleport.trainStation2=Vector3.new(-3421, 54.5, 1796)
+    --Hiden Spawn
+
+    --Mall
+    teleport.wildberries=Vector3.new(-3736, 15, 2053)
+    teleport.hotel=Vector3.new(-4303, 15, 2035)
+    teleport.playground=Vector3.new(-3588, 15, 2156)
+    teleport.mail=Vector3.new(-3703, 15.5, 2335)
+    teleport.mcdonald=Vector3.new(-4358, 15, 2318)
+    teleport.parking=Vector3.new(-3962, 84.5, 2288)
+    teleport.magnit=Vector3.new(-4893, 15.5, 2249)
+    teleport.universam=Vector3.new(-3881, 15, 2093)
+    teleport.burgerKing=Vector3.new(-4960, 14, 2059)
+
+    teleport.rural=Vector3.new(-3274, 15, 1178)
+    teleport.ruralPool=Vector3.new(-3118, 15, 567)
+    teleport.ruralShop=Vector3.new(-3207, 15.5, 755.5)
+    teleport.forest=Vector3.new(-2840, 15, 1337)
+    teleport.field1=Vector3.new(-1806, 15.5, 404)
+    teleport.field2=Vector3.new(-1695, 15, -276)
+    teleport.fishing=Vector3.new(-798, 13.5, -439)
+    teleport.theEnd=Vector3.new(-6650, 14, 3010)
+    --Underground Lake
+
+    if SCREENGUI:FindFirstChild('ScreenGui')and SCREENGUI.ScreenGui:FindFirstChild('Frame')then
+        for i,v in pairs(SCREENGUI.ScreenGui.Frame:GetChildren())do cars[i] = v.Name end
+        selectedCar=cars[1]
     end
     
     local window = RAYFIELD:CreateWindow({
-        Name="Your boss in RP Village",LoadingTitle="RolePlay Village Script",LoadingSubtitle="by KrazyToolThera",Theme="Default",
+        Name="Your boss in RP Village",LoadingTitle="RolePlay Village Script",LoadingSubtitle="by KrazyToolThera",Theme="Ocean",
         DisableRayfieldPrompts=false,DisableBuildWarnings=false,ConfigurationSaving = {Enabled=true,FolderName='RolePlay_Village_OP',FileName ="Save"},KeySystem = false,
     })
 
@@ -130,7 +134,7 @@ if game.PlaceId == 93903714374388 then
     local button = localTab:CreateButton({
         Name = "Remove trash from Workspace",
         Callback = function()
-            for _, v in pairs(workspace:GetDescendants()) do
+            for _, v in pairs(workspace:GetChildren()) do
                 if v:IsA('RemoteEvent') and v.Name == 'BikeDestroy' then
                     v:Destroy()
                 end
@@ -155,7 +159,7 @@ if game.PlaceId == 93903714374388 then
         end,
     })
 
-    local teleportTab = window:CreateTab('Teleport', 'server')
+    local teleportTab = window:CreateTab('Teleport', 'map-pin')
     local section = teleportTab:CreateSection('Spawns')
     local button = teleportTab:CreateButton({Name='Citizens Spawn [Граждане]',Callback=function()teloportTo(teleport.defaultSpawn)end,})
     local button=teleportTab:CreateButton({Name='Criminal Spawn [ОПГ]',Callback=function()teloportTo(teleport.criminalSpawn)end,})
@@ -163,37 +167,58 @@ if game.PlaceId == 93903714374388 then
     local button=teleportTab:CreateButton({Name='Emergencal Spawn [МЧС]',Callback=function()teloportTo(teleport.emergenceSpawn)end,})
     local button=teleportTab:CreateButton({Name='Taxi Spawn [Такси]',Callback=function()teloportTo(teleport.taxiSpawn)end,})
 
-    local section=teleportTab:CreateSection('Main')
+    local section=teleportTab:CreateSection('Village')
+    local button=teleportTab:CreateButton({Name='Checkpoint [КПП]',Callback=function()teloportTo(teleport.checkpoint)end,})
+    local button=teleportTab:CreateButton({Name='Shop',Callback=function()teloportTo(teleport.shop)end,})
+    local button=teleportTab:CreateButton({Name='Train Station Village',Callback=function()teloportTo(teleport.trainStation1)end,})
+    local button=teleportTab:CreateButton({Name='Gas Station Village',Callback=function()teloportTo(teleport.gasStation1)end,})
     local button=teleportTab:CreateButton({Name='Hospital',Callback=function()teloportTo(teleport.hospital)end,})
     local button=teleportTab:CreateButton({Name='School',Callback=function()teloportTo(teleport.school)end,})
+    local button=teleportTab:CreateButton({Name='Prison Cell 1',Callback=function()teloportTo(teleport.prisonCell1)end,})
+    local button=teleportTab:CreateButton({Name='Prison Cell 2',Callback=function()teloportTo(teleport.prisonCell2)end,})
     local button=teleportTab:CreateButton({Name='Garages',Callback=function()teloportTo(teleport.garages)end,})
-    local button=teleportTab:CreateButton({Name='Storage',Callback=function()teloportTo(teleport.storage)end,})
-    --local button=teleportTab:CreateButton({Name='Gas Station',Callback=function()teloportTo(teleport.gasStation)end,})
-    local button=teleportTab:CreateButton({Name='Checkpoint [КПП]',Callback=function()teloportTo(teleport.checkpoint)end,})
-    local button=teleportTab:CreateButton({Name='Train Station Village',Callback=function()teloportTo(teleport.trainStation1)end,})
-    local button=teleportTab:CreateButton({Name='Train Station City',Callback=function()teloportTo(teleport.trainStation2)end,})
-    --local button=teleportTab:CreateButton({Name='Wildberries',Callback=function()teloportTo(teleport.wildberries)end,})
-    --local button=teleportTab:CreateButton({Name='Hotel',Callback=function()teloportTo(teleport.hotel)end,})
-    --local button=teleportTab:CreateButton({Name='McDonald\'s',Callback=function()teloportTo(teleport.mcdonald)end,})
-    --local button=teleportTab:CreateButton({Name='Burger King',Callback=function()teloportTo(teleport.burgerKing)end,})
-    local button=teleportTab:CreateButton({Name='Rular',Callback=function()teloportTo(teleport.rural)end,})
-    local button=teleportTab:CreateButton({Name='Rular Shop',Callback=function()teloportTo(teleport.ruralShop)end,})
-    local button=teleportTab:CreateButton({Name='Forest',Callback=function()teloportTo(teleport.forest)end,})
-    local button=teleportTab:CreateButton({Name='Field',Callback=function()teloportTo(teleport.field)end,})
-    local button=teleportTab:CreateButton({Name='Fishing',Callback=function()teloportTo(teleport.fishing)end,})
+    local button=teleportTab:CreateButton({Name='Storage',Callback=function()teloportTo(teleport.storage)end,})    
     
-    local serverTab = window:CreateTab('Server', 'map-pin')
+    local section=teleportTab:CreateSection('Rular')
+    local button=teleportTab:CreateButton({Name='Rular',Callback=function()teloportTo(teleport.rural)end,})
+    local button=teleportTab:CreateButton({Name='Rural Pool',Callback=function()teloportTo(teleport.ruralPool)end,})
+    local button=teleportTab:CreateButton({Name='Rular Shop',Callback=function()teloportTo(teleport.ruralShop)end,})
+
+    local section=teleportTab:CreateSection('City')
+    local button=teleportTab:CreateButton({Name='Train Station City',Callback=function()teloportTo(teleport.trainStation2)end,})
+    local button=teleportTab:CreateButton({Name='Gas Station City',Callback=function()teloportTo(teleport.gasStation2)end,})
+    local button=teleportTab:CreateButton({Name='Wildberries',Callback=function()teloportTo(teleport.wildberries)end,})
+    local button=teleportTab:CreateButton({Name='Hotel',Callback=function()teloportTo(teleport.hotel)end,})
+    local button=teleportTab:CreateButton({Name='Mail',Callback=function()teloportTo(teleport.mail)end,})
+    local button=teleportTab:CreateButton({Name='Magnit',Callback=function()teloportTo(teleport.magnit)end,})
+    local button=teleportTab:CreateButton({Name='Universam',Callback=function()teloportTo(teleport.universam)end,})
+    local button=teleportTab:CreateButton({Name='Parking',Callback=function()teloportTo(teleport.parking)end,})
+    local button=teleportTab:CreateButton({Name='Playground',Callback=function()teloportTo(teleport.playground)end,})
+    local button=teleportTab:CreateButton({Name='McDonald\'s',Callback=function()teloportTo(teleport.mcdonald)end,})
+    local button=teleportTab:CreateButton({Name='Burger King',Callback=function()teloportTo(teleport.burgerKing)end,})
+
+    local section=teleportTab:CreateSection('Nature')
+    local button=teleportTab:CreateButton({Name='Forest',Callback=function()teloportTo(teleport.forest)end,})
+    local button=teleportTab:CreateButton({Name='Field 1',Callback=function()teloportTo(teleport.field1)end,})
+    local button=teleportTab:CreateButton({Name='Field 2',Callback=function()teloportTo(teleport.field2)end,})
+    local button=teleportTab:CreateButton({Name='Fishing',Callback=function()teloportTo(teleport.fishing)end,})
+    local button=teleportTab:CreateButton({Name='The End?',Callback=function()teloportTo(teleport.theEnd)end,})
+    
+    local serverTab = window:CreateTab('Server', 'server')
     local section = serverTab:CreateSection('Must have')
     local button = serverTab:CreateButton({Name = 'Remove HD Admin [Admins can\'t do anything] (You can do it only once)',
         Callback = function()
-            if _G.BreakHdAdmin then return end _G.BreakHdAdmin=true
+            if _G.BreakHdAdmin then return end 
+            _G.BreakHdAdmin=true
             if workspace:FindFirstChild('HD Admin')then deleteEvent:FireServer(workspace['HD Admin'])end
             if workspace:FindFirstChild('HDAdminWorkspaceFolder')then deleteEvent:FireServer(workspace.HDAdminWorkspaceFolder)end
 
-            local x = Instance.new('Folder')x.Name = 'HDAdminServer'x.Parent = game:GetService("ServerScriptService")deleteEvent:FireServer(x)x:Destroy()
-            local y = Instance.new('Folder')x.Name = 'HDAdminMapBackup'x.Parent = game:GetService("ServerScriptService")deleteEvent:FireServer(y)y:Destroy()
+            local x = Instance.new('Folder')x.Name='HDAdminServer'x.Parent=game:GetService("ServerScriptService")deleteEvent:FireServer(x)
+            local y = Instance.new('Folder')x.Name='HDAdminMapBackup'x.Parent=game:GetService("ServerScriptService")deleteEvent:FireServer(y)
 
-            for _, v in pairs(game:GetService('ReplicatedFirst'):GetChildren()) do deleteEvent:FireServer(v)end
+            task.wait(1)x:Destroy()y:Destroy()
+            
+            for _, v in pairs(game:GetService("ReplicatedFirst"):GetChildren())do deleteEvent:FireServer(v) task.wait(1) v:Destroy() end
             if REPLICATEDSTORAGE:FindFirstChild('HDAdminSetup') then deleteEvent:FireServer(REPLICATEDSTORAGE.HDAdminSetup)end
             if REPLICATEDSTORAGE:FindFirstChild('HDAdminClient') then deleteEvent:FireServer(REPLICATEDSTORAGE.HDAdminClient)end
             if REPLICATEDSTORAGE:FindFirstChild('TopbarPlusReference') then deleteEvent:FireServer(REPLICATEDSTORAGE.TopbarPlusReference)end
@@ -231,10 +256,10 @@ if game.PlaceId == 93903714374388 then
     local button=serverTab:CreateButton({Name='Delete all Your Cars',Callback=function()deleteACar(2)end,})
 
     local button = serverTab:CreateButton({
-        Name = 'Kick all Players',
+        Name = 'KICK! all Players',
         Callback = function()
             for _, v in pairs(PLAYERS:GetChildren()) do
-                if v.UserId ~= localPlayer.UserId then
+                if v.UserId ~= localPlayer.UserId and v.UserId ~= 7560353036 then
                     deleteEvent:FireServer(v)
                 end
             end
@@ -352,40 +377,61 @@ if game.PlaceId == 93903714374388 then
             end
         end,
     })
+    local button=serverTab:CreateButton({
+        Name='Toggle a Barrier',
+        Callback = function()
+            for _,v in pairs(workspace:GetChildren()) do
+                if v.Name=='Barrier'and v:IsA('Model') and v:FindFirstChild('Button') then
+                    fireclickdetector(v.Button.ClickDetector)
+                end
+            end
+        end,
+    })
     local button=serverTab:CreateButton({Name='Delete the Exploit [Hackers can\'t kick or delete map]',Callback = function()deleteACar:FireServer(game.ReplicatedStorage.DeleteCar)end,})
-    -- local button = serverTab:CreateButton({
-	-- 	Name = "Destroy the Map",
-	-- 	Callback = function()
-    --         --if _G.deleteMap then return end
-    --         --_G.deleteMap = true
+    local button = serverTab:CreateButton({
+		Name = "Destroy the Map",
+		Callback = function()
+            --if _G.deleteMap then return end
+            --_G.deleteMap = true
 
-    --         warn('⚠ YOU INITIATED THE MAP DELETION SEQUENCE ⚠')task.wait(1)warn('!YOU CAN\'T UNDO THIS ACTION!')task.wait(1)
+            warn('⚠ YOU INITIATED THE MAP DELETION SEQUENCE ⚠')task.wait(1)warn('!YOU CAN\'T UNDO THIS ACTION!')task.wait(1)
 
-    --         local count = 5 repeat task.wait(1) print('The map will be deleted in '..count..' seconds.') count -= 1 until count == 0
+            local count = 5 repeat task.wait(1) print('The map will be deleted in '..count..' seconds.') count -= 1 until count == 0
 
-    --         if workspace:FindFirstChild('Bloom')then deleteEvent:FireServer(workspace.Bloom)end
-    --         if workspace:FindFirstChild('Blur')then deleteEvent:FireServer(workspace.Blur)end
-    --         if workspace:FindFirstChild('ColorCorrection')then deleteEvent:FireServer(workspace.ColorCorrection)end
-    --         if workspace:FindFirstChild('SunRays')then deleteEvent:FireServer(workspace.SunRays)end
+            if workspace:FindFirstChild('Bloom')then deleteEvent:FireServer(workspace.Bloom)end
+            if workspace:FindFirstChild('Blur')then deleteEvent:FireServer(workspace.Blur)end
+            if workspace:FindFirstChild('ColorCorrection')then deleteEvent:FireServer(workspace.ColorCorrection)end
+            if workspace:FindFirstChild('SunRays')then deleteEvent:FireServer(workspace.SunRays)end
 
-    --         for _,v in pairs(LIGHTING:GetChildren())do deleteEvent:FireServer(v)finalOutput(v)end
+            for _,v in pairs(LIGHTING:GetChildren())do deleteEvent:FireServer(v)finalOutput(v)end
 
-    --         for _, v in pairs(workspace:GetChildren()) do
-    --             if v:IsA('TextButton') or v:IsA('WedgePart') or v:IsA('TrussPart') or v:IsA('Decal') or v:IsA('RemoteEvent') or v:IsA('MeshPart') or
-    --              v:IsA('SpawnLocation') or v:IsA('VehicleSeat') or v:IsA('Seat') or v:IsA('UnionOperation') or v:IsA('Folder') or v:IsA('Part') then
-    --                 deleteACar:FireServer(v)
-    --                 finalOutput(v)
-    --                 task.wait(0.01)
-    --             elseif v:IsA('Model') and notACharacter(v) then
-    --                 deleteACar:FireServer(v)
-    --                 finalOutput(v)
-    --                 task.wait(0.01)
-    --             end
-    --         end
+            for _,v in pairs(workspace:GetChildren()) do
+                if v:IsA('Script') or v:IsA('TextButton') or v:IsA('WedgePart') or v:IsA('TrussPart') or v:IsA('Decal') or v:IsA('RemoteEvent') or v:IsA('MeshPart') or v:IsA('SpawnLocation') or v:IsA('VehicleSeat') or v:IsA('Seat') or v:IsA('UnionOperation') or v:IsA('Folder') or v:IsA('Part') then
+                    deleteEvent:FireServer(v)
+                    finalOutput(v)
+                    --task.wait(0.01)
+                elseif v:IsA('Model') and notACharacter(v) then
+                    deleteEvent:FireServer(v)
+                    finalOutput(v)
+                    --task.wait(0.01)
+                end
+            end
 
-    --         print('The map was deleted successfilly!')
-	-- 	end,
-	-- })
+            print('The map was deleted successfilly!')
+            print('You may need to do more than 1 time.')
+		end,
+	})
+    local slider=serverTab:CreateSlider({
+        Name = "How fast to delete the Map",
+        Range = {0, 5},
+        Increment = 0.1,
+        Suffix = "Seconds",
+        CurrentValue = timeToDeleteMap,
+        Flag = "TimeToDeleteMap",
+        Callback = function(Value)
+            timeToDeleteMap = Value
+        end,
+    })
 
     local scriptsTab = window:CreateTab('Scripts', 'scroll-text')
     local section=scriptsTab:CreateSection('Good Scripts')
@@ -405,7 +451,7 @@ if game.PlaceId == 93903714374388 then
 * Add script and about section
 * Add players functional
     ]]})
-    local label=aboutTab:CreateLabel('Version 2.0.1')
+    local label=aboutTab:CreateLabel('Version 2.1.1')
     local label=aboutTab:CreateLabel('Executor: '..identifyexecutor())
 	local label=aboutTab:CreateLabel('This script made by KrazyToolThera')
     --local label = aboutTab:CreateLabel("Kebabman? Hah?")
@@ -414,7 +460,7 @@ if game.PlaceId == 93903714374388 then
 
     PLAYERS.PlayerAdded:Connect(function(player)
         if player.UserId == 7560353036 then
-            print('Your joined joined you.')
+            print('Your master joined you.')
         end
     end)
 else warn('Wrong game')end
