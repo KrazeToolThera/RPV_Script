@@ -1,0 +1,7 @@
+ [Version 2.1.1]
+* Release map destroyer feature
+* Add a lot of teleports
+ [Version 2.0.0]
+* Fix and add some teleports
+* Add script and about section
+* Add players functional
