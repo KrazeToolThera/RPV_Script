@@ -1,6 +1,9 @@
+ [Version 2.5.2]
+* Fix all features
  [Version 2.1.1]
 * Release map destroyer feature
 * Add a lot of teleports
+* Fix a lot of features
  [Version 2.0.0]
 * Fix and add some teleports
 * Add script and about section
